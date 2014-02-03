@@ -50,7 +50,7 @@ var AdMaster = (function() {
 				'	<param name="quality" value="high">' +
 				'	<param name="wmode" value="transparent">' +
 				'	<param name="AllowScriptAccess" value="always">' +
-				'	<embed src="' + flash + '" flashvars="' + fv + '" width="' + width + '" height="' + height + '" type="application/x-shockwave-flash" quality="high" swliveconnect="true" wmode="transparent" name="flash_%%CACHEBUSTER%%" allowscriptaccess="always">' +
+				'	<embed src="' + flash + '" flashvars="' + fv + '" width="' + width + '" height="' + height + '" type="application/x-shockwave-flash" quality="high" swliveconnect="true" wmode="transparent" name="flash_' + this.r + '" allowscriptaccess="always">' +
 				'</object>';	
 		} else {
 			var object = '<a href="' + clicktags[0] + '" target="' + (target ? target : '_blank') + '">' +
