@@ -35,7 +35,7 @@ var AdMaster = (function() {
 
 			for(var i = 0, l = cts.length; i < l; ++i) {
 				for(var j = 0, m = ct_keys.length; j < m; ++j) {
-					fv.push(ct_keys[j] + '=' + cts[i]);
+					fv.push(ct_keys[j] + (i == 0 ? '' : i + 1) + '=' + cts[i]);
 				}
 			}
 
