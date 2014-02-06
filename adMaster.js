@@ -41,50 +41,25 @@ var AdMaster = (function() {
 
 			return escape(fv.join('&'));
 	}
-	function getEmbed(width, height, flash, backupImage, clicktags, r, target) {
+	function getEmbed(width, height, flash, html, backupImage, clicktags, target) {
 		if(hasFlash() && !!flash) {
 			var fv = getFlashVars(clicktags),
-				object = '<object width="' + width + '" height="' + height + '">' +
+			
+			return '<object width="' + width + '" height="' + height + '">' +
 				'	<param name="movie" value="' + flash + '">' +
 				'	<param name="flashvars" value="' + fv + '">' +
 				'	<param name="quality" value="high">' +
 				'	<param name="wmode" value="transparent">' +
 				'	<param name="AllowScriptAccess" value="always">' +
-				'	<embed src="' + flash + '" flashvars="' + fv + '" width="' + width + '" height="' + height + '" type="application/x-shockwave-flash" quality="high" swliveconnect="true" wmode="transparent" name="flash_' + r + '" allowscriptaccess="always">' +
+				'	<embed src="' + flash + '" flashvars="' + fv + '" width="' + width + '" height="' + height + '" type="application/x-shockwave-flash" quality="high" swliveconnect="true" wmode="transparent" allowscriptaccess="always">' +
 				'</object>';	
+		} else if(html) {
+			return '<div style="position:relative;width:' + width + 'px;height:' + height + 'px;overflow:hidden;">' + html + '</div>';
 		} else {
-			var object = '<a href="' + clicktags[0] + '" target="' + (target ? target : '_blank') + '">' +
+			return '<a href="' + clicktags[0] + '" target="' + (target ? target : '_blank') + '">' +
 				'	<img src="' + backupImage + '" width="' + width + '" height="' + height + '" alt="Advertisement">' +
 				'</a>';
 		}
-
-		return object;
-	}
-	function getHTML(r) {
-		if(html) {
-			var script = '	var ifrm = document.createElement("iframe"),' +
-				'		ifrmDoc;' +
-				'	ifrm.width = width;' +
-				'	ifrm.height = height;' +
-				'	ifrm.frameBorder = 0;' +
-				'	parent.appendChild(ifrm);' +
-				'	ifrmDoc = (ifrm.contentWindow) ? ifrm.contentWindow : (ifrm.contentDocument.document) ? ifrm.contentDocument.document : ifrm.contentDocument;' +
-				'	ifrmDoc.document.open();' +
-				'	ifrmDoc.document.write(html);' +
-				'	ifrmDoc.document.close();';
-		} else {
-			var script = '	var img = new Image(),' +
-				'		anc = document.createElement("a");' +
-				'	img.src = backupImage;' +
-				'	img.width = width;' +
-				'	img.height = height;' +
-				'	anc.href = clickThroughUrl;' +
-				'	anc.setAttribute("target", (target ? target : "_blank"));' +
-				'	anc.appendChild(img);' +
-				'	parent.appendChild(anc);';
-		}
-
-		return 'function insertCreative_' + r + '(parent, width, height, html, backupImage, clickThroughUrl, target) {' + script + '}';
 	}
 	function getCookieLoader(r) {
 		return 'var cookie_' + r + ' = (function() {' +
@@ -122,7 +97,6 @@ var AdMaster = (function() {
 	return {
 		cachebuster: cachebuster,
 		getEmbed: getEmbed,
-		getHTML: getHTML,
 		getCookieLoader: getCookieLoader,
 		load: function(template, imps, js) {
 			if(template.delivery == 'RM' && top != self) {
@@ -283,6 +257,7 @@ var TAS_Billboard = function(o) {
 	this.w = o.width;
 	this.h = o.height;
 	this.fl = o.flash;
+	this.h5 = o.html;
 	this.bi = o.backupImage;
 	this.cts = o.clicktags; // array of clicktag URL strings
 	this.r = AdMaster.cachebuster();
@@ -299,7 +274,7 @@ var TAS_Billboard = function(o) {
 	this.obw = o.customOpenWidth || 20;
 	this.obh = o.customOpenHeight || 20;
 
-	this.embed = AdMaster.getEmbed(this.w, this.h, this.fl, this.bi, this.cts, this.r);
+	this.embed = AdMaster.getEmbed(this.w, this.h, this.fl, this.h5, this.bi, this.cts);
 
 	this.css = '#basil-ad-' + this.r + ' {' +
 		'	position: relative;' +
@@ -687,6 +662,7 @@ var TAS_Overlay = function(o) {
 	this.w = o.width;
 	this.h = o.height;
 	this.fl = o.flash;
+	this.h5 = o.html;
 	this.bi = o.backupImage;
 	this.cts = o.clicktags; // array of clicktag URL strings
 	this.r = AdMaster.cachebuster();
@@ -695,7 +671,7 @@ var TAS_Overlay = function(o) {
 	this.cdt = o.customClose == 'Yes' ? 'none' : 'block';
 	this.btn = 'http://a.dolimg.com/ads/close-button.png';
 
-	this.embed = AdMaster.getEmbed(this.w, this.h, this.fl, this.bi, this.cts, this.r);
+	this.embed = AdMaster.getEmbed(this.w, this.h, this.fl, this.h5, this.bi, this.cts);
 
 	this.css = '#basil-ad-' + this.r + ' {' +
 		'	position: fixed;' +
@@ -750,10 +726,13 @@ var TAS_Pushdown = function(o) {
 	this.ch = o.collapsedHeight;
 	this.eh = o.expandedHeight;
 	this.afl = o.autoFlash;
+	this.ah5 = o.autoHtml;
 	this.abi = o.autoBackupImage;
 	this.ufl = o.userFlash;
+	this.uh5 = o.userHtml;
 	this.ubi = o.userBackupImage;
 	this.cfl = o.collapsedFlash;
+	this.ch5 = o.collapsedHtml;
 	this.cbi = o.collapsedBackupImage;
 	this.cts = o.clicktags; // array of clicktag URL strings
 	this.r = AdMaster.cachebuster();
@@ -768,9 +747,9 @@ var TAS_Pushdown = function(o) {
 	this.down = 'http://a.dolimg.com/ads/down_arrow.png';
 	this.up = 'http://a.dolimg.com/ads/up_arrow.png';
 
-	this.autoEmbed = AdMaster.getEmbed(this.w, this.eh, this.afl, this.abi, this.cts, this.r);
-	this.userEmbed = AdMaster.getEmbed(this.w, this.eh, this.ufl, this.ubi, this.cts, this.r);
-	this.collEmbed = AdMaster.getEmbed(this.w, this.ch, this.cfl, this.cbi, this.cts, this.r);
+	this.autoEmbed = AdMaster.getEmbed(this.w, this.eh, this.afl, this.ah5, this.abi, this.cts);
+	this.userEmbed = AdMaster.getEmbed(this.w, this.eh, this.ufl, this.uh5, this.ubi, this.cts);
+	this.collEmbed = AdMaster.getEmbed(this.w, this.ch, this.cfl, this.ch5, this.cbi, this.cts);
 
 	this.css = '#basil-ad-' + this.r + ' {' +
 		'	position: relative;' +
@@ -890,8 +869,10 @@ var TAS_Sidekick = function(o) {
 	this.sw = o.sidekickWidth;
 	this.sh = o.sidekickHeight;
 	this.bfl = o.baseFlash;
+	this.bh5 = o.baseHtml;
 	this.bbi = o.baseBackupImage;
 	this.sfl = o.sidekickFlash;
+	this.sh5 = o.sidekickHtml;
 	this.sbi = o.sidekickBackupImage;
 	this.cts = o.clicktags; // array of clicktag URL strings
 	this.r = AdMaster.cachebuster();
@@ -900,8 +881,8 @@ var TAS_Sidekick = function(o) {
 	this.cdt = o.customClose == 'Yes' ? 'none' : 'block';
 	this.btn = 'http://a.dolimg.com/ads/close-button.png';
 
-	this.baseEmbed = AdMaster.getEmbed(this.bw, this.bh, this.bfl, this.bbi, ['javascript:open_sidekick();'], this.r, '_self');
-	this.sideEmbed = AdMaster.getEmbed(this.sw, this.sh, this.sfl, this.sbi, this.cts, this.r);
+	this.baseEmbed = AdMaster.getEmbed(this.bw, this.bh, this.bfl, this.bh5, this.bbi, ['javascript:open_sidekick();'], '_self');
+	this.sideEmbed = AdMaster.getEmbed(this.sw, this.sh, this.sfl, this.sh5, this.sbi, this.cts);
 
 	this.css = '#basil-ad-' + this.r + ' {' +
 		'	position: relative;' +
@@ -1117,11 +1098,12 @@ var TAS_StaticSiteServed = function(o) {
 	this.w = o.width;
 	this.h = o.height;
 	this.fl = o.flash;
+	this.h5 = o.html;
 	this.bi = window.devicePixelRatio >= 2 && o.retinaImage != '' ? o.retinaImage : o.backupImage;
 	this.cts = o.clicktags; // array of clicktag URL strings
 	this.r = AdMaster.cachebuster();
 
-	this.embed = AdMaster.getEmbed(this.w, this.h, this.fl, this.bi, this.cts, this.r);
+	this.embed = AdMaster.getEmbed(this.w, this.h, this.fl, this.h5, this.bi, this.cts);
 
 	this.html = '<div id="basil-ad-' + this.r + '" data-adtype="' + this.adtype + '">' +
 		'	<div id="sss-' + this.r + '">' +
