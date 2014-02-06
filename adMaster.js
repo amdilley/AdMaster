@@ -41,24 +41,50 @@ var AdMaster = (function() {
 
 			return escape(fv.join('&'));
 	}
-	function getEmbed(width, height, flash, backup_image, clicktags, r, target) {
+	function getEmbed(width, height, flash, backupImage, clicktags, r, target) {
 		if(hasFlash() && !!flash) {
-			var fv = getFlashVars(clicktags);
-			var object = '<object width="' + width + '" height="' + height + '">' +
+			var fv = getFlashVars(clicktags),
+				object = '<object width="' + width + '" height="' + height + '">' +
 				'	<param name="movie" value="' + flash + '">' +
 				'	<param name="flashvars" value="' + fv + '">' +
 				'	<param name="quality" value="high">' +
 				'	<param name="wmode" value="transparent">' +
 				'	<param name="AllowScriptAccess" value="always">' +
-				'	<embed src="' + flash + '" flashvars="' + fv + '" width="' + width + '" height="' + height + '" type="application/x-shockwave-flash" quality="high" swliveconnect="true" wmode="transparent" name="flash_' + this.r + '" allowscriptaccess="always">' +
+				'	<embed src="' + flash + '" flashvars="' + fv + '" width="' + width + '" height="' + height + '" type="application/x-shockwave-flash" quality="high" swliveconnect="true" wmode="transparent" name="flash_' + r + '" allowscriptaccess="always">' +
 				'</object>';	
 		} else {
 			var object = '<a href="' + clicktags[0] + '" target="' + (target ? target : '_blank') + '">' +
-				'	<img src="' + backup_image + '" width="' + width + '" height="' + height + '" alt="Advertisement">' +
+				'	<img src="' + backupImage + '" width="' + width + '" height="' + height + '" alt="Advertisement">' +
 				'</a>';
 		}
 
 		return object;
+	}
+	function getHTML(r) {
+		if(html) {
+			var script = '	var ifrm = document.createElement("iframe"),' +
+				'		ifrmDoc;' +
+				'	ifrm.width = width;' +
+				'	ifrm.height = height;' +
+				'	ifrm.frameBorder = 0;' +
+				'	parent.appendChild(ifrm);' +
+				'	ifrmDoc = (ifrm.contentWindow) ? ifrm.contentWindow : (ifrm.contentDocument.document) ? ifrm.contentDocument.document : ifrm.contentDocument;' +
+				'	ifrmDoc.document.open();' +
+				'	ifrmDoc.document.write(html);' +
+				'	ifrmDoc.document.close();';
+		} else {
+			var script = '	var img = new Image(),' +
+				'		anc = document.createElement("a");' +
+				'	img.src = backupImage;' +
+				'	img.width = width;' +
+				'	img.height = height;' +
+				'	anc.href = clickThroughUrl;' +
+				'	anc.setAttribute("target", (target ? target : "_blank"));' +
+				'	anc.appendChild(img);' +
+				'	parent.appendChild(anc);';
+		}
+
+		return 'function insertCreative_' + r + '(parent, width, height, html, backupImage, clickThroughUrl, target) {' + script + '}';
 	}
 	function getCookieLoader(r) {
 		return 'var cookie_' + r + ' = (function() {' +
@@ -96,6 +122,7 @@ var AdMaster = (function() {
 	return {
 		cachebuster: cachebuster,
 		getEmbed: getEmbed,
+		getHTML: getHTML,
 		getCookieLoader: getCookieLoader,
 		load: function(template, imps, js) {
 			if(template.delivery == 'RM' && top != self) {
