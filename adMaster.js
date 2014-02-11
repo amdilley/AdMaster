@@ -43,7 +43,7 @@ var AdMaster = (function() {
 	}
 	function getEmbed(width, height, flash, html, backupImage, clicktags, target) {
 		if(hasFlash() && !!flash) {
-			var fv = getFlashVars(clicktags),
+			var fv = getFlashVars(clicktags);
 			
 			return '<object width="' + width + '" height="' + height + '">' +
 				'	<param name="movie" value="' + flash + '">' +
@@ -100,7 +100,7 @@ var AdMaster = (function() {
 		getCookieLoader: getCookieLoader,
 		load: function(template, imps, js) {
 			if(template.delivery == 'RM' && top != self) {
-				var h, c, s;
+				var c, h, s;
 
 				if(template.css) {
 					c = top.document.createElement('style');
@@ -119,8 +119,8 @@ var AdMaster = (function() {
 					h.setAttribute('class', 'gpt-rich-media-content');
 					h.style.display = 'inline-block';
 					h.style.width = '100%';
-					thisFrame.parentNode.insertBefore(h, thisFrame);
 					h.innerHTML = template.html;
+					thisFrame.parentNode.insertBefore(h, thisFrame);
 				}
 
 				if(template.js) {
@@ -368,16 +368,22 @@ var TAS_Custom = function(o) {
 	this.j = document.getElementById(o.jsElementId).textContent || document.getElementById(o.jsElementId).innerText;
 	this.r = AdMaster.cachebuster();
 
-	this.css = this.c.replace(/%%r%%/g, this.r);
+	this.css = this.c ? this.c.replace(/%%r%%/g, this.r) : '';
 
-	this.html = this.h.replace(/%%r%%/g, this.r);
+	this.html = this.h ? this.h.replace(/%%r%%/g, this.r) : '';
 
-	this.js = this.j.replace(/%%r%%/g, this.r);
+	this.js = this.j ? this.j.replace(/%%r%%/g, this.r) : '';
 };
 
 var TAS_Flex = function(o) {
 	this.delivery = 'RM';
-	this.adtype = 'Flex Static';
+	this.adtype = 'Flex';
+	this.h51 = document.getElementById(o.htmlElementId1).textContent || document.getElementById(o.htmlElementId1).innerText;
+	this.h52 = document.getElementById(o.htmlElementId2).textContent || document.getElementById(o.htmlElementId2).innerText;
+	this.h53 = document.getElementById(o.htmlElementId3).textContent || document.getElementById(o.htmlElementId3).innerText;
+	this.h54 = document.getElementById(o.htmlElementId4).textContent || document.getElementById(o.htmlElementId4).innerText;
+	this.onShow = document.getElementById(o.showElementId).textContent || document.getElementById(o.showElementId).innerText;
+	this.onHide = document.getElementById(o.hideElementId).textContent || document.getElementById(o.hideElementId).innerText;
 	this.b1 = o.base_320x50;
 	this.b2 = o.base_768x66;
 	this.bg1 = o.bg_480x480;
@@ -394,11 +400,20 @@ var TAS_Flex = function(o) {
 	/*** custom open/close text/button details ***/
 	this.btn = 'http://a.dolimg.com/ads/close-button.png';
 
-	this.css = '#basil-ad-' + this.r + ' img {' +
+	this.h51 = this.h51 ? this.h51.replace(/%%r%%/g, this.r) : '';
+	this.h52 = this.h52 ? this.h52.replace(/%%r%%/g, this.r) : '';
+	this.h53 = this.h53 ? this.h53.replace(/%%r%%/g, this.r) : '';
+	this.h54 = this.h54 ? this.h54.replace(/%%r%%/g, this.r) : '';
+
+	this.embed1 = AdMaster.getEmbed(320, 320, '', this.h51, this.i1, [this.ct]);
+	this.embed2 = AdMaster.getEmbed(480, 480, '', this.h52, this.i2, [this.ct]);
+	this.embed3 = AdMaster.getEmbed(600, 600, '', this.h53, this.i3, [this.ct]);
+	this.embed4 = AdMaster.getEmbed(768, 768, '', this.h54, this.i4, [this.ct]);
+
+	this.css = '#basil-ad-' + this.r + ' img, #close-' + this.r + ', .base-' + this.r + ', #base-img-' + this.r + ' {' +
 		'	border: none;' +
 		'	box-shadow: none;' +
 		'	outline: none;' +
-		'	display: none;' +
 		'}' +
 		'#close-' + this.r + ' {' +
 		'	position: fixed;' +
@@ -406,9 +421,9 @@ var TAS_Flex = function(o) {
 		'	right: 5px;' +
 		'	width: 30px;' +
 		'	height: 30px;' +
-		'	z-index: 2000000001;' +
+		'	z-index: 1000000002;' +
 		'}' +
-		'#bg-' + this.r + ', #img-' + this.r + ' {' +
+		'#bg-' + this.r + ', #box-' + this.r + ' {' +
 		'	position: fixed;' +
 		'	top: 50%;' +
 		'	left: 50%;' +
@@ -416,8 +431,8 @@ var TAS_Flex = function(o) {
 		'#bg-' + this.r + ' {' +
 		'	z-index: 1000000000;' +
 		'}' +
-		'#img-' + this.r + ', .base-' + this.r + ' {' +
-		'	z-index: 2000000000;' +
+		'.base-' + this.r + ', #box-' + this.r + ' {' +
+		'	z-index: 1000000001;' +
 		'}' +
 		'.base-' + this.r + ' {' +
 		'	position: fixed;' +
@@ -519,16 +534,27 @@ var TAS_Flex = function(o) {
 
 	this.html = '<div id="basil-ad-' + this.r + '" data-adtype="' + this.adtype + '">' +
 		'	<div class="base-' + this.r + '">' +
-		'		<img id="base-img-' + this.r + '" alt="Advertisement" onclick="flex-' + this.r + '.show();">' +
+		'		<img id="base-img-' + this.r + '" alt="Advertisement" onclick="flex_' + this.r + '.show();">' +
 		'	</div>' +
-		'	<img id="bg-' + this.r + '" alt="Advertisement" onclick="flex-' + this.r + '.hide();">' +
-		'	<img id="close-' + this.r + '" src="' + this.btn + '" alt="Close" onclick="flex-' + this.r + '.hide();">' +
-		'	<a href="' + this.ct + '" target="_blank">' +
-		'		<img id="img-' + this.r + '" alt="Advertisement">' +
-		'	</a>' +
+		'	<div id="box-' + this.r + '">' +
+		'		<img id="bg-' + this.r + '" alt="Advertisement" onclick="flex_' + this.r + '.hide();">' +
+		'		<img id="close-' + this.r + '" src="' + this.btn + '" alt="Close" onclick="flex_' + this.r + '.hide();">' +
+		'		<div id="creative_1-' + this.r + '">' +
+		'			' + this.embed1 + 
+		'		</div>' +
+		'		<div id="creative_2-' + this.r + '">' +
+		'			' + this.embed2 +
+		'		</div>' +
+		'		<div id="creative_3-' + this.r + '">' +
+		'			' + this.embed3 +
+		'		</div>' +
+		'		<div id="creative_4-' + this.r + '">' +
+		'			' + this.embed4 + 
+		'		</div>' +
+		'	</div>' +
 		'</div>';
 
-	this.js = 'var flex-' + this.r + ' = (function(o) {' +
+	this.js = 'var flex_' + this.r + ' = (function(o) {' +
 		'	init();' +
 		'	window.onresize = adjustFlex;' +
 		'	function init() {' +
@@ -560,40 +586,46 @@ var TAS_Flex = function(o) {
 		'		addClass(o.base, "gpt-rich-media-content");' +
 		'		addClass(o.bg, "gpt-rich-media-content");' +
 		'		addClass(o.box.parentNode, "gpt-rich-media-content");' +
+		'		o.close.style.display = "none";' +
+		'		o.bg.style.display = "none";' +
+		'		o.box.style.display = "none";' +
 		'	}' +
 		'	function adjustFlex() {' +
 		'		var min_dim = Math.min(window.innerWidth, window.innerHeight);' +
+		'		for(var i = 0, l = o.creatives.length; i < l; ++i) {' +
+		'			o.creatives[i].style.display = "none";' +
+		'		}' +
 		'		if(min_dim <= 480) {' +
-		'			o.bg.setAttribute("class", "smartphone-bg-' + this.r + '");' +
 		'			o.bg.src = o.bgs[0];' +
-		'			o.box.setAttribute("class", "smartphone-box-' + this.r + '");' +
-		'			o.box.src = o.images[0];' +
+		'			o.bg.className = "smartphone-bg-' + this.r + '";' +
+		'			o.box.className = "smartphone-box-' + this.r + '";' +
+		'			o.creatives[0].style.display = "block";' +
 		'		} else if(min_dim > 480 && min_dim <= 600) {' +
-		'			o.bg.setAttribute("class", "tweener-bg-' + this.r + '");' +
 		'			o.bg.src = o.bgs[1];' +
-		'			o.box.setAttribute("class", "tweener-box-' + this.r + '");' +
-		'			o.box.src = o.images[1];' +
+		'			o.bg.className = "tweener-bg-' + this.r + '";' +
+		'			o.box.className = "tweener-box-' + this.r + '";' +
+		'			o.creatives[1].style.display = "block";' +
 		'		} else if(min_dim > 600 && min_dim <= 768) {' +
-		'			o.bg.setAttribute("class", "tablet-bg-' + this.r + '");' +
 		'			o.bg.src = o.bgs[2];' +
-		'			o.box.setAttribute("class", "tablet-box-' + this.r + '");' +
-		'			o.box.src = o.images[2];' +
+		'			o.bg.className = "tablet-bg-' + this.r + '";' +
+		'			o.box.className = "tablet-box-' + this.r + '";' +
+		'			o.creatives[2].style.display = "block";' +
 		'		} else {' +
-		'			o.bg.setAttribute("class", "desktop-bg-' + this.r + '");' +
 		'			o.bg.src = o.bgs[3];' +
-		'			o.box.setAttribute("class", "desktop-box-' + this.r + '");' +
-		'			o.box.src = o.images[3];' +
+		'			o.bg.className = "desktop-bg-' + this.r + '";' +
+		'			o.box.className = "desktop-box-' + this.r + '";' +
+		'			o.creatives[3].style.display = "block";' +
 		'		}' +
 		'		if(window.innerWidth < 768) {' +
 		'			o.base.style.height = "50px";' +
 		'			o.bimg.src = o.bases[0];' +
 		'			o.bimg.style.width = "320px";' +
-		'			o.state = "handset";' + 
+		'			o.state = "handset";' +
 		'		} else {' +
 		'			o.base.style.height = "66px";' +
 		'			o.bimg.src = o.bases[1];' +
 		'			o.bimg.style.width = "768px";' +
-		'			o.state = "tablet";' + 
+		'			o.state = "tablet";' +
 		'		}' +
 		'	}' +
 		'	function addClass(el, newClass) {' +
@@ -623,6 +655,7 @@ var TAS_Flex = function(o) {
 		'			addClass(o.close, "fade-in-' + this.r + '");' +
 		'			addClass(o.bg, "fade-in-' + this.r + '");' +
 		'			addClass(o.box, "fade-in-' + this.r + '");' +
+		'			' + this.onShow + 
 		'		}, 50);' +
 		'	}' +
 		'	function hide() {' +
@@ -638,6 +671,7 @@ var TAS_Flex = function(o) {
 		'			o.box.style.display = "none";' +
 		'			removeClass(o.base, "hide-handset-' + this.r + '");' +
 		'			removeClass(o.base, "hide-tablet-' + this.r + '");' +
+		'			' + this.onHide + 
 		'		}, 300);' +
 		'	}' +
 		'	return {' +
@@ -649,10 +683,11 @@ var TAS_Flex = function(o) {
 		'	base: document.querySelector(".base-' + this.r + '"),' +
 		'	bimg: document.getElementById("base-img-' + this.r + '"),' +
 		'	bg: document.getElementById("bg-' + this.r + '"),' +
-		'	box: document.getElementById("img-' + this.r + '"),' +
+		'	box: document.getElementById("box-' + this.r + '"),' +
 		'	bases: ["' + this.b1 + '", "' + this.b2 + '"],' +
 		'	bgs: ["' + this.bg1 + '", "' + this.bg2 + '", "' + this.bg3 + '", "' + this.bg4 + '"],' +
-		'	images: ["' + this.i1 + '", "' + this.i2 + '", "' + this.i3 + '", "' + this.i4 + '"]' +
+		'	images: ["' + this.i1 + '", "' + this.i2 + '", "' + this.i3 + '", "' + this.i4 + '"],' +
+		'	creatives: [document.getElementById("creative_1-' + this.r + '"), document.getElementById("creative_2-' + this.r + '"), document.getElementById("creative_3-' + this.r + '"), document.getElementById("creative_4-' + this.r + '")]' +
 		'}));';
 };
 
