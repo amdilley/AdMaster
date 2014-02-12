@@ -404,6 +404,8 @@ var TAS_Flex = function(o) {
 	this.h52 = this.h52 ? this.h52.replace(/%%r%%/g, this.r) : '';
 	this.h53 = this.h53 ? this.h53.replace(/%%r%%/g, this.r) : '';
 	this.h54 = this.h54 ? this.h54.replace(/%%r%%/g, this.r) : '';
+	this.onShow = this.onShow ? this.onShow.replace(/%%r%%/g, this.r) : '';
+	this.onHide = this.onHide ? this.onHide.replace(/%%r%%/g, this.r) : '';
 
 	this.embed1 = AdMaster.getEmbed(320, 320, '', this.h51, this.i1, [this.ct]);
 	this.embed2 = AdMaster.getEmbed(480, 480, '', this.h52, this.i2, [this.ct]);
@@ -899,15 +901,17 @@ var TAS_Pushdown = function(o) {
 var TAS_Sidekick = function(o) {
 	this.delivery = 'RM';
 	this.adtype = 'Sidekick';
+	this.bh5 = document.getElementById(o.baseHtmlElementId).textContent || document.getElementById(o.baseHtmlElementId).innerText;
+	this.sh5 = document.getElementById(o.sidekickHtmlElementId).textContent || document.getElementById(o.sidekickHtmlElementId).innerText;
+	this.onShow = document.getElementById(o.showElementId).textContent || document.getElementById(o.showElementId).innerText;
+	this.onHide = document.getElementById(o.hideElementId).textContent || document.getElementById(o.hideElementId).innerText;
 	this.bw = o.baseWidth;
 	this.bh = o.baseHeight;
 	this.sw = o.sidekickWidth;
 	this.sh = o.sidekickHeight;
 	this.bfl = o.baseFlash;
-	this.bh5 = o.baseHtml;
 	this.bbi = o.baseBackupImage;
 	this.sfl = o.sidekickFlash;
-	this.sh5 = o.sidekickHtml;
 	this.sbi = o.sidekickBackupImage;
 	this.cts = o.clicktags; // array of clicktag URL strings
 	this.r = AdMaster.cachebuster();
@@ -915,6 +919,11 @@ var TAS_Sidekick = function(o) {
 	/*** custom open/close text/button details ***/
 	this.cdt = o.customClose == 'Yes' ? 'none' : 'block';
 	this.btn = 'http://a.dolimg.com/ads/close-button.png';
+
+	this.bh5 = this.bh5 ? this.bh5.replace(/%%r%%/g, this.r) : '';
+	this.sh5 = this.sh5 ? this.sh5.replace(/%%r%%/g, this.r) : '';
+	this.onShow = this.onShow ? this.onShow.replace(/%%r%%/g, this.r) : '';
+	this.onHide = this.onHide ? this.onHide.replace(/%%r%%/g, this.r) : '';
 
 	this.baseEmbed = AdMaster.getEmbed(this.bw, this.bh, this.bfl, this.bh5, this.bbi, ['javascript:open_sidekick();'], '_self');
 	this.sideEmbed = AdMaster.getEmbed(this.sw, this.sh, this.sfl, this.sh5, this.sbi, this.cts);
@@ -970,10 +979,12 @@ var TAS_Sidekick = function(o) {
 		'function open_sidekick() {' +
 		'	animate_' + this.r + '(document.body, 0, margin_' + this.r + ', 600, 0);' +
 		'	animate_' + this.r + '(sidekick_' + this.r + ',  -' + this.sw + ', 0, 600, 0);' +
+		'	' + this.onShow +
 		'}' +
 		'function close_sidekick() {' +
 		'	animate_' + this.r + '(document.body, margin_' + this.r + ', 0, 600, 0);' +
 		'	animate_' + this.r + '(sidekick_' + this.r + ', 0, -' + this.sw + ', 600, 0);' +
+		'	' + this.onHide +
 		'}' +
 		'function init_' + this.r + '() {' +
 		'	sidekick_' + this.r + '.setAttribute("class", "gpt-rich-media-content");' +
