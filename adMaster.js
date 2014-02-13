@@ -1,5 +1,5 @@
 var AdMaster = (function() {
-	var frames = top.document.getElementsByTagName('iframe'),
+	var frames = top == parent ? top.document.getElementsByTagName('iframe') : [],
 		thisFrame;
 
 	for(var i = 0, l = frames.length; i < l; i++){
@@ -141,7 +141,7 @@ var AdMaster = (function() {
 					(template.html ? '<span style="display:inline-block;">' + template.html + '</span>' : '') + 
 					(template.js ? '<script type="text/javascript">' + template.js + '</scr'+'ipt>' : '');
 
-				if(top != self) {
+				if(top != self && top == parent) {
 					for(var i = 0, l = js.length; i < l; i++){
 						if(js[i]) thisFrame.parentNode.insertBefore(addJS(js[i]), thisFrame.nextSibling);
 					}
