@@ -946,6 +946,7 @@ var TAS_Sidekick = function(o) {
 		'	width: 30px;' +
 		'	height: 30px;' +
 		'	display: ' + this.cdt + ';' +
+		'	z-index: 1000000001;' +
 		'}';
 
 	this.html = '<div id="basil-ad-' + this.r + '" data-adtype="' + this.adtype + '">' +
