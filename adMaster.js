@@ -716,7 +716,7 @@ var TAS_Overlay = function(o) {
 		'	left: 0;' +
 		'	width: 100%;' +
 		'	height: 100%;' +
-		'	background: background:url("http://a.dolimg.com/ads/lightbox.png");' +
+		'	background: url("http://a.dolimg.com/ads/lightbox.png");' +
 		'	z-index: 1000000000;' +
 		'	display: none;' +
 		'}' +
@@ -734,6 +734,9 @@ var TAS_Overlay = function(o) {
 		'	width: 40px;' +
 		'	height: 40px;' +
 		'	cursor: pointer;' +
+		'}' +
+		'#overlay-' + this.r + ' img {' +
+		'	border: none;' +
 		'}';
 
 	this.html = '<div id="basil-ad-' + this.r + '" data-adtype="' + this.adtype + '" onclick="close_overlay();">' +
@@ -751,7 +754,7 @@ var TAS_Overlay = function(o) {
 		'function init_' + this.r + '() {' +
 		'	document.getElementById("close-' + this.r + '").style.display = "' + this.cdt + '";' +
 		'	document.getElementById("basil-ad-' + this.r + '").style.display = "block";' +
-		'	timeout_' + this.r + ' = setTimeout(close_' + this.r + ', 10000);' +
+		'	timeout_' + this.r + ' = setTimeout(close_overlay, 10000);' +
 		'}' +
 		'setTimeout(init_' + this.r + ', 250);';
 };
